@@ -1,12 +1,13 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { ResultCode } from "common/enums"
 import { handleServerAppError, handleServerNetworkError } from "common/utils"
 import { Dispatch } from "redux"
 import { setAppStatus } from "../../../app/appSlice"
-import { RootState } from "../../../app/store"
+import { AppDispatch, RootState } from "../../../app/store"
 import { tasksApi } from "../api/tasksApi"
 import { DomainTask, UpdateTaskDomainModel, UpdateTaskModel } from "../api/tasksApi.types"
 import { addTodolist, removeTodolist } from "./todolistsSlice"
+import { createAppAsyncThunk } from "common/utils/createAppAsyncThunk"
 
 export type TasksStateType = {
   [key: string]: DomainTask[]
@@ -51,13 +52,20 @@ export const tasksSlice = createSlice({
       .addCase(removeTodolist, (state, action) => {
         delete state[action.payload.id]
       })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+      state[action.payload.todolistId] = action.payload.tasks
+    })
   },
   selectors: {
     selectTasks: (state) => state,
   },
 })
 
-export const fetchTasks = createAsyncThunk(
+export const fetchTasks = createAppAsyncThunk<
+  { todolistId: string; tasks: DomainTask[] },
+  string,
+  { state: RootState; dispatch: AppDispatch; rejectValue: null }
+>(
   `${tasksSlice.name}/fetchTasks`,
   async (todolistId: string, thunkAPI) => {
     const dispatch = thunkAPI.dispatch
@@ -66,8 +74,10 @@ export const fetchTasks = createAsyncThunk(
       const res = await tasksApi.getTasks(todolistId)
       dispatch(setAppStatus({ status: 'succeeded' }))
       dispatch(setTasks({ todolistId, tasks: res.data.items }))
-    } catch (error: any) {
+      return { todolistId, tasks: res.data.items }
+    } catch (error) {
       handleServerNetworkError(error, dispatch)
+      return thunkAPI.rejectWithValue(null)
     }
   }
 )

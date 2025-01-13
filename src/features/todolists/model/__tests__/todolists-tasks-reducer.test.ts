@@ -13,7 +13,10 @@ test("ids should be equals", () => {
     order: 0,
   }
 
-  const action = addTodolist({ todolist })
+  const action = {
+    type: addTodolist.fulfilled.type,
+    payload: { todolist },
+  }
 
   const endTasksState = tasksReducer(startTasksState, action)
   const endTodolistsState = todolistsReducer(startTodolistsState, action)

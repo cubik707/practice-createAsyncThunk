@@ -131,7 +131,7 @@ test("status of specified task should be changed", () => {
   const action = {
     type: updateTask.fulfilled.type,
     payload: { todolistId: "todolistId2", taskId: "2", domainModel: { status: TaskStatus.New } },
- };
+  }
 
   const endState = tasksReducer(startState, action)
 
@@ -142,7 +142,7 @@ test("status of specified task should be changed", () => {
 test("title of specified task should be changed", () => {
   const action = {
     type: updateTask.fulfilled.type,
-    payload: { todolistId: "todolistId2", taskId: "2", domainModel: { title: "coffee" } }
+    payload: { todolistId: "todolistId2", taskId: "2", domainModel: { title: "coffee" } },
   }
 
   const endState = tasksReducer(startState, action)
@@ -152,14 +152,17 @@ test("title of specified task should be changed", () => {
 })
 
 test("new array should be added when new todolist is added", () => {
-  const action = addTodolist({
-    todolist: {
-      id: "blabla",
-      title: "new todolist",
-      order: 0,
-      addedDate: "",
+  const action = {
+    type: addTodolist.fulfilled.type,
+    payload: {
+      todolist: {
+        id: "blabla",
+        title: "new todolist",
+        order: 0,
+        addedDate: "",
+      },
     },
-  })
+  }
 
   const endState = tasksReducer(startState, action)
 
@@ -174,7 +177,10 @@ test("new array should be added when new todolist is added", () => {
 })
 
 test("property with todolistId should be deleted", () => {
-  const endState = tasksReducer(startState, removeTodolist({ id: "todolistId2" }))
+  const endState = tasksReducer(startState, {
+    type: removeTodolist.fulfilled.type,
+    payload: { id: "todolistId2" },
+  })
 
   const keys = Object.keys(endState)
 

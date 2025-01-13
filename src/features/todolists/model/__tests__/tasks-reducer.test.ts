@@ -86,13 +86,13 @@ beforeEach(() => {
 })
 
 test("correct task should be deleted from correct array", () => {
-  const endState = tasksReducer(
-    startState,
-    removeTask({
+  const endState = tasksReducer(startState, {
+    type: removeTask.fulfilled.type,
+    payload: {
       taskId: "2",
       todolistId: "todolistId2",
-    }),
-  )
+    },
+  })
 
   expect(endState["todolistId1"].length).toBe(3)
   expect(endState["todolistId2"].length).toBe(2)
@@ -100,20 +100,23 @@ test("correct task should be deleted from correct array", () => {
 })
 
 test("correct task should be added to correct array", () => {
-  const action = addTask({
-    task: {
-      todoListId: "todolistId2",
-      title: "juce",
-      status: TaskStatus.New,
-      addedDate: "",
-      deadline: "",
-      description: "",
-      order: 0,
-      priority: 0,
-      startDate: "",
-      id: "id exists",
+  const action = {
+    type: addTask.fulfilled.type,
+    payload: {
+      task: {
+        todoListId: "todolistId2",
+        title: "juce",
+        status: TaskStatus.New,
+        addedDate: "",
+        deadline: "",
+        description: "",
+        order: 0,
+        priority: 0,
+        startDate: "",
+        id: "id exists",
+      },
     },
-  })
+  }
 
   const endState = tasksReducer(startState, action)
 
@@ -125,7 +128,10 @@ test("correct task should be added to correct array", () => {
 })
 
 test("status of specified task should be changed", () => {
-  const action = updateTask({ todolistId: "todolistId2", taskId: "2", domainModel: { status: TaskStatus.New } })
+  const action = {
+    type: updateTask.fulfilled.type,
+    payload: { todolistId: "todolistId2", taskId: "2", domainModel: { status: TaskStatus.New } },
+ };
 
   const endState = tasksReducer(startState, action)
 
@@ -134,7 +140,10 @@ test("status of specified task should be changed", () => {
 })
 
 test("title of specified task should be changed", () => {
-  const action = updateTask({ todolistId: "todolistId2", taskId: "2", domainModel: { title: "coffee" } })
+  const action = {
+    type: updateTask.fulfilled.type,
+    payload: { todolistId: "todolistId2", taskId: "2", domainModel: { title: "coffee" } }
+  }
 
   const endState = tasksReducer(startState, action)
 

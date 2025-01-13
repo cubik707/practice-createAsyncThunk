@@ -1,9 +1,9 @@
-import { asyncThunkCreator, buildCreateSlice } from "@reduxjs/toolkit"
 import { ResultCode } from "common/enums"
 import { handleServerAppError, handleServerNetworkError } from "common/utils"
 import { RequestStatus, setAppStatus } from "../../../app/appSlice"
 import { todolistsApi } from "../api/todolistsApi"
 import { Todolist } from "../api/todolistsApi.types"
+import { createSliceWithThunks } from "common/utils/createSliceWithThunks"
 
 export type FilterValuesType = "all" | "active" | "completed"
 
@@ -11,8 +11,6 @@ export type DomainTodolist = Todolist & {
   filter: FilterValuesType
   entityStatus: RequestStatus
 }
-
-const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })
 
 export const todolistsSlice = createSliceWithThunks({
   name: "todolists",

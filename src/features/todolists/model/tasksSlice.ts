@@ -1,4 +1,3 @@
-import { asyncThunkCreator, buildCreateSlice } from "@reduxjs/toolkit"
 import { ResultCode } from "common/enums"
 import { handleServerAppError, handleServerNetworkError } from "common/utils"
 import { setAppError, setAppStatus } from "../../../app/appSlice"
@@ -6,12 +5,11 @@ import { RootState } from "../../../app/store"
 import { tasksApi } from "../api/tasksApi"
 import { DomainTask, UpdateTaskDomainModel, UpdateTaskModel } from "../api/tasksApi.types"
 import { addTodolist, removeTodolist } from "./todolistsSlice"
+import { createSliceWithThunks } from "common/utils/createSliceWithThunks"
 
 export type TasksStateType = {
   [key: string]: DomainTask[]
 }
-
-const createSliceWithThunks = buildCreateSlice({ creators: { asyncThunk: asyncThunkCreator } })
 
 export const tasksSlice = createSliceWithThunks({
   name: "tasks",

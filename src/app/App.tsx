@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "common/hooks"
 import { getTheme } from "common/theme"
 import { useEffect } from "react"
 import { Outlet } from "react-router-dom"
-import { initializeAppTC, selectIsInitialized } from "../features/auth/model/authSlice"
+import { initializeApp, selectIsInitialized } from "../features/auth/model/authSlice"
 import CircularProgress from "@mui/material/CircularProgress"
 import s from "./App.module.css"
 import { selectThemeMode } from "./appSlice"
@@ -17,7 +17,7 @@ export const App = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(initializeAppTC())
+    dispatch(initializeApp())
   }, [])
 
   return (

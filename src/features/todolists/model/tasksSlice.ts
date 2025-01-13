@@ -1,7 +1,7 @@
 import { asyncThunkCreator, buildCreateSlice } from "@reduxjs/toolkit"
 import { ResultCode } from "common/enums"
 import { handleServerAppError, handleServerNetworkError } from "common/utils"
-import { setAppStatus } from "../../../app/appSlice"
+import { setAppError, setAppStatus } from "../../../app/appSlice"
 import { RootState } from "../../../app/store"
 import { tasksApi } from "../api/tasksApi"
 import { DomainTask, UpdateTaskDomainModel, UpdateTaskModel } from "../api/tasksApi.types"
@@ -100,28 +100,30 @@ export const tasksSlice = createSliceWithThunks({
             const tasksForCurrentTodolist = allTasksFromState[todolistId]
             const task = tasksForCurrentTodolist.find((t) => t.id === taskId)
 
-            if (task) {
-              const model: UpdateTaskModel = {
-                status: task.status,
-                title: task.title,
-                deadline: task.deadline,
-                description: task.description,
-                priority: task.priority,
-                startDate: task.startDate,
-                ...domainModel,
-              }
-
-              dispatch(setAppStatus({ status: "loading" }))
-              const res = await tasksApi.updateTask({ taskId, todolistId, model })
-              if (res.data.resultCode === ResultCode.Success) {
-                dispatch(setAppStatus({ status: "succeeded" }))
-                return arg
-              } else {
-                handleServerAppError(res.data, dispatch)
-                return rejectWithValue(null)
-              }
+            if (!task) {
+              dispatch(setAppError({ error: "Task not found" }))
+              return rejectWithValue(null)
             }
-            return rejectWithValue(null)
+
+            const model: UpdateTaskModel = {
+              status: task.status,
+              title: task.title,
+              deadline: task.deadline,
+              description: task.description,
+              priority: task.priority,
+              startDate: task.startDate,
+              ...domainModel,
+            }
+
+            dispatch(setAppStatus({ status: "loading" }))
+            const res = await tasksApi.updateTask({ taskId, todolistId, model })
+            if (res.data.resultCode === ResultCode.Success) {
+              dispatch(setAppStatus({ status: "succeeded" }))
+              return arg
+            } else {
+              handleServerAppError(res.data, dispatch)
+              return rejectWithValue(null)
+            }
           } catch (error) {
             handleServerNetworkError(error, dispatch)
             return rejectWithValue(null)
